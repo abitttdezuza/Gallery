@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📸 Private Gallery</h1>
+
+<!-- Login -->
+<input type="password" id="password" placeholder="Enter admin password">
+<button onclick="login()">Login</button>
+
+<!-- Admin Panel -->
+<div id="adminPanel" style="display:none;">
+    <h3>Admin Panel</h3>
+    <input type="file" id="image">
+    <button onclick="uploadImage()">Upload</button>
+</div>
+
+<hr>
+
+<!-- Gallery -->
+<div id="gallery" class="gallery"></div>
+
+<script>
+function login() {
+    let pass = document.getElementById("password").value;
+
+    if (pass === "abit") {
+        document.getElementById("adminPanel").style.display = "block";
+        alert("Admin unlocked");
+    } else {
+        alert("Wrong password");
+    }
+}
+
+function uploadImage() {
+    let file = document.getElementById("image").files[0];
+    if (!file) return alert("Select image");
+
+    let formData = new FormData();
+    formData.append("image", file);
+
+    fetch("upload.php", {
+        method: "POST",
+        body: formData
+    }).then(() => {
+        loadImages();
+    });
+}
+
+function loadImages() {
+    fetch("get_images.php")
+    .then(res => res.json())
+    .then(data => {
+        let gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+        data.forEach(img => {
+            gallery.innerHTML += `<img src="${img}">`;
+        });
+    });
+}
+
+loadImages();
+</script>
+
+</body>
+      </html>
